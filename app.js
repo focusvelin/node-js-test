@@ -2,6 +2,8 @@
 const http = require('http');
 const express = require('express');
 
+const some = "variable";
+
 const app = express();
 
 app.set('port', process.env.PORT || 3000); // Application port is set

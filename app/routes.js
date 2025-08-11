@@ -3,3 +3,4 @@ module.exports = function(app) {
         res.render('index'); // index view file is rendered when HTTP GET '/' called
     });
 }
+
