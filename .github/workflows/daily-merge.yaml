@@ -1,0 +1,129 @@
+name: Daily Merge main to stage
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  merge-main-to-stage:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      - name: Fetch latest changes
+        run: |
+          git fetch origin main
+          git fetch origin stage
+
+      - name: Checkout stage branch
+        run: git checkout stage
+
+      - name: Merge main into stage
+        id: merge
+        run: |
+          echo "Starting merge of main into stage..."
+          
+          if git merge origin/main --no-ff -m "chore: Daily merge from main to stage"; then
+            echo "Merge successful"
+            echo "merge_status=success" >> $GITHUB_OUTPUT
+            
+            echo "merge_commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+            echo "merge_message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+          else
+            echo "Merge failed due to conflicts"
+            echo "merge_status=conflict" >> $GITHUB_OUTPUT
+            
+            git merge --abort
+            
+            echo "Checking for potential conflicts..."
+            git diff --name-only origin/main origin/stage > conflicts.txt
+            echo "conflict_files=$(cat conflicts.txt | head -20 | tr '\n' ' ')" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Push changes
+        if: steps.merge.outputs.merge_status == 'success'
+        run: |
+          git push origin stage
+          echo "Changes pushed successfully to stage branch"
+
+      - name: Create issue for merge conflicts
+        if: failure() && steps.merge.outputs.merge_status == 'conflict'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const date = new Date().toISOString().split('T')[0];
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Daily Merge Conflict: main to stage (${date})`,
+              body: `## Merge Conflict Detected
+              
+              The automated daily merge from \`main\` to \`stage\` failed due to conflicts.
+              
+              **Date**: ${date}
+              **Branches**: \`main\` to \`stage\`
+              
+              ### Action Required
+              Please manually resolve the merge conflicts by:
+              1. Checkout the \`stage\` branch
+              2. Merge \`main\` into it
+              3. Resolve any conflicts
+              4. Commit and push the changes
+              
+              ### Commands to resolve:
+              \`\`\`bash
+              git checkout stage
+              git pull origin stage
+              git merge origin/main
+              git add .
+              git commit
+              git push origin stage
+              \`\`\`
+              
+              ### Potentially conflicting files (first 20):
+              ${{ steps.merge.outputs.conflict_files || 'Unable to determine conflict files' }}
+              
+              @focusvelin, please resolve this merge conflict.
+              ---
+              *This issue was automatically created by the daily merge workflow.*`,
+              labels: ['merge-conflict', 'automated']
+            });
+            console.log(`Created issue #${issue.data.number}`);
+
+      - name: Send notification on success
+        if: success() && steps.merge.outputs.merge_status == 'success'
+        run: |
+          echo "Daily merge from main to stage completed successfully"
+          echo "Merge commit: ${{ steps.merge.outputs.merge_commit }}"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Daily Merge Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ steps.merge.outputs.merge_status }}" == "success" ]]; then
+            echo "**Status**: Success" >> $GITHUB_STEP_SUMMARY
+            echo "**Merge Commit**: \`${{ steps.merge.outputs.merge_commit }}\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Status**: Failed (Merge Conflicts)" >> $GITHUB_STEP_SUMMARY
+            echo "**Action Required**: Manual conflict resolution needed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Potentially Conflicting Files:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "${{ steps.merge.outputs.conflict_files }}" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow Run**: [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
