@@ -40,7 +40,7 @@ jobs:
           for branch in "${BRANCHES[@]}"; do
             b=${branch#origin/} # strip origin/
             echo "$b"
-            if [[ "$b" != "main" || "$b" != "hintstage" ]]; then
+            if [[ "$b" != "main" && "$b" != "hintstage" ]]; then
               git tag archive/$b $b &&
               git push origin archive/$b &&
               git push origin --delete $b
