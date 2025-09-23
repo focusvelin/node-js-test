@@ -1,34 +1,50 @@
-name: Archive old Branches
+name: Archive old branches
 
 on:
+  schedule:
+    - cron: "0 3 * * 0" # каждое воскресенье в 03:00 UTC
   workflow_dispatch:
 
 jobs:
-  find-and-archive:
+  archive-branches:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # fetch all branches
+          fetch-depth: 0  # нужно, чтобы видеть все коммиты
 
-      - name: Find branches older than 1 year
-        id: old_branches
+      - name: Setup git
         run: |
-          # Get current date minus 1 year
-          cutoff=$(date -d "today" +%s)
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          echo "Branches older than 1 year:"
-          old_branches=()
-          for branch in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/); do
-            b=${branch#origin/} # strip origin/
-            last_commit=$(git log -1 --format=%ct $branch || echo 0)
-            if [ "$b" != "main" && "$b" != archive/* && "$last_commit" -lt "$cutoff" ]; then
-              archive_name="archive/$b"
-              echo "Renaming branch $b to $archive_name"
-              git branch -m "$b" "$archive_name"
-              git push origin "$archive_name"
-              git push origin --delete "$b"  # remove old branch from remote
+      - name: Find and archive old branches
+        run: |
+          NOW=$(date +%s)
+          YEAR=$((365*24*60*60))
+
+          # получить список всех удалённых веток
+          for branch in $(git for-each-ref --format='%(refname:short) %(committerdate:unix)' refs/remotes/origin | grep -v "HEAD ->" ); do
+            bname=$(echo $branch | awk '{print $1}' | sed 's|origin/||')
+            last_commit=$(echo $branch | awk '{print $2}')
+
+            # пропускаем main/master и уже архивные
+            if [[ "$bname" == "main" || "$bname" == "master" || "$bname" == archive/* ]]; then
+              continue
+            fi
+
+            age=$((NOW - last_commit))
+            if [ $age -gt 1 ]; then
+              echo "Archiving branch: $bname"
+
+              # создаём локальную ветку
+              git checkout origin/$bname
+              git branch archive/$bname origin/$bname
+              git push origin archive/$bname
+
+              # удаляем старую ветку
+              git push origin --delete $bname
             fi
           done
