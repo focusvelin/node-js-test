@@ -1,68 +1,48 @@
-name: Archive Old Branches
+name: Archive old Branches
 
 on:
-  schedule:
-    - cron: '0 0 1 * *' # Runs monthly on the 1st at 00:00 UTC
-  workflow_dispatch: # Allows manual triggering
-
-permissions:
-  contents: write # Needed to rename branches
+  workflow_dispatch:
 
 jobs:
-  archive-branches:
+  find-and-archive:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch all history and branches
+          fetch-depth: 0  # fetch all branches
 
-      - name: Set up Git
+      - name: Find branches older than 1 year
+        id: old_branches
         run: |
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
+          # Get current date minus 1 year
+          cutoff=$(date -d "today" +%s)
 
-      - name: Find and archive old branches
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Get current date in seconds since epoch
-          current_date=$(date +%s)
-          one_year_ago=$((current_date - 31536000)) # 1 year = 31536000 seconds
-
-          # Get all branches
-          branches=$(git branch -r | grep -v 'HEAD' | sed 's/origin\///')
-
-          for branch in $branches; do
-            # Skip branches that already have archive/ prefix
-            if [[ $branch == "main" || $branch == archive/* ]]; then
-              continue
-            }
-
-            # Get the date of the last commit in seconds
-            last_commit_date=$(git log -1 --format=%ct origin/$branch 2>/dev/null || echo 0)
-            
-            # Check if the branch is older than one year
-            if [ $last_commit_date -ne 0 ] && [ $last_commit_date -lt 100000000000000000 ]; then
-              echo "Archiving branch: $branch"
-              
-              # Create new branch name with archive/ prefix
-              new_branch="archive/$branch"
-              
-              # Check if archive branch already exists
-              if git rev-parse --verify "origin/$new_branch" >/dev/null 2>&1; then
-                echo "Archive branch $new_branch already exists, skipping..."
-                continue
-              fi
-
-              # Create archive branch and push it
-              git checkout $branch
-              git push origin $branch:$new_branch
-              
-              # Delete the original branch
-              git push origin --delete $branch
-              
-              echo "Successfully archived $branch to $new_branch"
+          echo "Branches older than 1 year:"
+          old_branches=()
+          for branch in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/); do
+            last_commit=$(git log -1 --format=%ct $branch || echo 0)
+            if [ "$last_commit" -lt "$cutoff" ]; then
+              echo "$branch"
+              old_branches+=("$branch")
             fi
+          done
+
+          # Save to output (comma-separated)
+          echo "branches=$(IFS=,; echo "${old_branches[*]}")" >> $GITHUB_OUTPUT
+
+
+      - name: Archive old branches
+        if: ${{ steps.old_branches.outputs.branches != '' }}
+        run: |
+          IFS=',' read -ra BRANCHES <<< "${{ steps.old_branches.outputs.branches }}"
+          for branch in "${BRANCHES[@]}"; do
+            b=${branch#origin/} # strip origin/
+            echo "$b"
+            # if [[ "$b" != "main" || "$b" != "hintstage" ]]; then
+            #   git tag archive/$b $b &&
+            #   git push origin archive/$b &&
+            #   git push origin --delete $b
+            # fi
           done
