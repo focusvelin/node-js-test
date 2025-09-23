@@ -1,9 +1,12 @@
-name: Archive old branches
+name: Archive Old Branches
 
 on:
   schedule:
-    - cron: "0 3 * * 0" # каждое воскресенье в 03:00 UTC
-  workflow_dispatch:
+    - cron: '0 0 1 * *' # Runs monthly on the 1st at 00:00 UTC
+  workflow_dispatch: # Allows manual triggering
+
+permissions:
+  contents: write # Needed to rename branches
 
 jobs:
   archive-branches:
@@ -13,38 +16,53 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # нужно, чтобы видеть все коммиты
+          fetch-depth: 0 # Fetch all history and branches
 
-      - name: Setup git
+      - name: Set up Git
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
 
       - name: Find and archive old branches
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          NOW=$(date +%s)
-          YEAR=$((365*24*60*60))
+          # Get current date in seconds since epoch
+          current_date=$(date +%s)
+          one_year_ago=$((current_date - 31536000)) # 1 year = 31536000 seconds
 
-          # получить список всех удалённых веток
-          for branch in $(git for-each-ref --format='%(refname:short) %(committerdate:unix)' refs/remotes/origin | grep -v "HEAD ->" ); do
-            bname=$(echo $branch | awk '{print $1}' | sed 's|origin/||')
-            last_commit=$(echo $branch | awk '{print $2}')
+          # Get all branches
+          branches=$(git branch -r | grep -v 'HEAD' | sed 's/origin\///')
 
-            # пропускаем main/master и уже архивные
-            if [[ "$bname" == "main" || "$bname" == "master" || "$bname" == archive/* ]]; then
+          for branch in $branches; do
+            # Skip branches that already have archive/ prefix
+            if [[ $branch == "main" || $branch == archive/* ]]; then
               continue
-            fi
+            }
 
-            age=$((NOW - last_commit))
-            if [ $age -gt 1 ]; then
-              echo "Archiving branch: $bname"
+            # Get the date of the last commit in seconds
+            last_commit_date=$(git log -1 --format=%ct origin/$branch 2>/dev/null || echo 0)
+            
+            # Check if the branch is older than one year
+            if [ $last_commit_date -ne 0 ] && [ $last_commit_date -lt 100000000000000000 ]; then
+              echo "Archiving branch: $branch"
+              
+              # Create new branch name with archive/ prefix
+              new_branch="archive/$branch"
+              
+              # Check if archive branch already exists
+              if git rev-parse --verify "origin/$new_branch" >/dev/null 2>&1; then
+                echo "Archive branch $new_branch already exists, skipping..."
+                continue
+              fi
 
-              # создаём локальную ветку
-              git checkout origin/$bname
-              git branch archive/$bname origin/$bname
-              git push origin archive/$bname
-
-              # удаляем старую ветку
-              git push origin --delete $bname
+              # Create archive branch and push it
+              git checkout $branch
+              git push origin $branch:$new_branch
+              
+              # Delete the original branch
+              git push origin --delete $branch
+              
+              echo "Successfully archived $branch to $new_branch"
             fi
           done
