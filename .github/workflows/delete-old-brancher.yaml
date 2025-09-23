@@ -22,9 +22,9 @@ jobs:
           echo "Branches older than 1 year:"
           old_branches=()
           for branch in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/); do
+            b=${branch#origin/} # strip origin/
             last_commit=$(git log -1 --format=%ct $branch || echo 0)
-            if [ "$last_commit" -lt "$cutoff" ]; then
-              b=${branch#origin/} # strip origin/
+            if [ "$b" != "main" && "$b" != archive/* && "$last_commit" -lt "$cutoff" ]; then
               archive_name="archive/$b"
               echo "Renaming branch $b to $archive_name"
               git branch -m "$b" "$archive_name"
