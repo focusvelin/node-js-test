@@ -41,6 +41,7 @@ jobs:
             b=${branch#origin/} # strip origin/
             echo "$b"
             if [[ "$b" != "main" && "$b" != "hintstage" ]]; then
+              git checkout $b
               git tag archive/$b $b &&
               git push origin archive/$b &&
               git push origin --delete $b
