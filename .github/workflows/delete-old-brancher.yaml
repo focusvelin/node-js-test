@@ -24,22 +24,7 @@ jobs:
           for branch in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/); do
             last_commit=$(git log -1 --format=%ct $branch || echo 0)
             if [ "$last_commit" -lt "$cutoff" ]; then
-              echo "$branch"
-              old_branches+=("$branch")
-            fi
-          done
-
-          # Save to output (comma-separated)
-          echo "branches=$(IFS=,; echo "${old_branches[*]}")" >> $GITHUB_OUTPUT
-
-
-      - name: Archive old branches
-        if: ${{ steps.old_branches.outputs.branches != '' }}
-        run: |
-          IFS=',' read -ra BRANCHES <<< "${{ steps.old_branches.outputs.branches }}"
-          for branch in "${BRANCHES[@]}"; do
-            b=${branch#origin/} # strip origin/
-            if [[ "$b" != "main" ]]; then
+              b=${branch#origin/} # strip origin/
               archive_name="archive/$b"
               echo "Renaming branch $b to $archive_name"
               git branch -m "$b" "$archive_name"
