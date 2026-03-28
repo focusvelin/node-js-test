@@ -1,6 +1,6 @@
 {
   "name": "sample-node-project",
-  "version": "1.0.2",
+  "version": "1.1.2",
   "description": "Sample Node.js Project",
   "main": "app.js",
   "scripts": {
@@ -11,5 +11,10 @@
   "dependencies": {
     "ejs": "^3.1.10",
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "semantic-release": "^24.2.9"
   }
 }

@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/focusvelin/node-js-test/compare/v1.1.1...v1.1.2) (2026-03-28)
+
+
+### Bug Fixes
+
+* assets ([d8ca44b](https://github.com/focusvelin/node-js-test/commit/d8ca44bf71dfb14d37bfe376ff5094b90b0eb835))
+
 ## [1.1.1](https://github.com/focusvelin/node-js-test/compare/v1.1.0...v1.1.1) (2026-03-28)
 
 
