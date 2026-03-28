@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/focusvelin/node-js-test/compare/v1.1.0...v1.1.1) (2026-03-28)
+
+
+### Bug Fixes
+
+* update releaserc ([84095af](https://github.com/focusvelin/node-js-test/commit/84095af90be2176c8435e23e62230456771d4bf1))
+
 # [1.1.0](https://github.com/focusvelin/node-js-test/compare/v1.0.2...v1.1.0) (2026-03-28)
 
 
