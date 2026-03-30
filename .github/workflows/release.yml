@@ -22,3 +22,31 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           include-v-in-tag: true
 
+      # - name: Start ssh-agent
+      #   uses: webfactory/ssh-agent@v0.9.0
+      #   with:
+      #     ssh-private-key: ${{ secrets.RELEASE_SSH_KEY }}
+
+      # - name: Trust GitHub host
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      # - name: Switch origin to SSH
+      #   run: |
+      #     git remote set-url origin git@github.com:${{ github.repository }}.git
+      #     git remote -v
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install deps
+        run: npm ci && npm i -D semantic-release @semantic-release/changelog @semantic-release/git
+
+      - name: Get semantic version
+        run: |
+          VERSION_SPACES=$(npx semantic-release --dryRun | grep -oP 'Published release \K.*? ')
+          VERSION="${VERSION_SPACES// /}" # Remove spaces
+          echo $VERSION
