@@ -38,12 +38,11 @@ jobs:
         with:
           node-version: 24
 
+      - name: Install deps
+        run: npm ci && npm i -D semantic-release @semantic-release/changelog @semantic-release/git
+
       - name: Get semantic version
         run: |
           VERSION_SPACES=$(npx semantic-release --dryRun | grep -oP 'Published release \K.*? ')
           VERSION="${VERSION_SPACES// /}" # Remove spaces
           echo $VERSION
-
-      # - name: Install deps
-      #   run: npm ci && npm i -D semantic-release @semantic-release/changelog @semantic-release/git
-
