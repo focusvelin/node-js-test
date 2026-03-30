@@ -7,6 +7,26 @@
 * test3 ([565ece1](https://github.com/focusvelin/node-js-test/commit/565ece18651d44f7cf234a11f3275c4812a744a9))
 * upgrade node version ([733e9d6](https://github.com/focusvelin/node-js-test/commit/733e9d66d1da64a5e6e87e9f50f2f1a369240b6a))
 
+## [1.2.0](https://github.com/focusvelin/node-js-test/compare/v1.1.4...v1.2.0) (2026-03-30)
+
+
+### Features
+
+* add wrapper ([297ce26](https://github.com/focusvelin/node-js-test/commit/297ce2682e587af1cd8339c993e68637b35034b0))
+* add wrapper ([d258400](https://github.com/focusvelin/node-js-test/commit/d258400ad24c3fcf4048fa403440bc8cee2b6f0d))
+
+
+### Bug Fixes
+
+* comment daily merge ([92e684b](https://github.com/focusvelin/node-js-test/commit/92e684b2e4b5ebef40ca6fe1800510ba23db3001))
+* release ([5b52d2c](https://github.com/focusvelin/node-js-test/commit/5b52d2c2c31712709505da253ae6e161538157d2))
+* remove ([f119116](https://github.com/focusvelin/node-js-test/commit/f11911627560662fd931fb7a58cd4cf38dafe0f0))
+* remove ([5301524](https://github.com/focusvelin/node-js-test/commit/5301524be8db564f2476d72f53790194f9aaa73d))
+* test12 ([69b0f7c](https://github.com/focusvelin/node-js-test/commit/69b0f7caaf8f8c68a12c228b2131ac807b7ed135))
+* test12 ([dc3eca3](https://github.com/focusvelin/node-js-test/commit/dc3eca3cae5d8156ca084305b609c9e13ee488c0))
+* test5 ([010d140](https://github.com/focusvelin/node-js-test/commit/010d1406bde084f38feb02279197afc2325984e2))
+* test5 ([786d57b](https://github.com/focusvelin/node-js-test/commit/786d57b3d3a88870d7a59b3bdb3f25323114ffb2))
+
 ## [1.1.3](https://github.com/focusvelin/node-js-test/compare/v1.1.2...v1.1.3) (2026-03-30)
 
 
