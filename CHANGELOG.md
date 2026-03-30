@@ -1,3 +1,12 @@
+## [1.1.4](https://github.com/focusvelin/node-js-test/compare/v1.1.3...v1.1.4) (2026-03-30)
+
+
+### Bug Fixes
+
+* test2 ([c423f29](https://github.com/focusvelin/node-js-test/commit/c423f2979dd0def55c5ddedeffadf2e9d2fd0d0c))
+* test3 ([565ece1](https://github.com/focusvelin/node-js-test/commit/565ece18651d44f7cf234a11f3275c4812a744a9))
+* upgrade node version ([733e9d6](https://github.com/focusvelin/node-js-test/commit/733e9d66d1da64a5e6e87e9f50f2f1a369240b6a))
+
 ## [1.1.3](https://github.com/focusvelin/node-js-test/compare/v1.1.2...v1.1.3) (2026-03-30)
 
 
