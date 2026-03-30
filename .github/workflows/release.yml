@@ -28,10 +28,10 @@ jobs:
       #     mkdir -p ~/.ssh
       #     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Switch origin to SSH
-        run: |
-          git remote set-url origin git@github.com:${{ github.repository }}.git
-          git remote -v
+      # - name: Switch origin to SSH
+      #   run: |
+      #     git remote set-url origin git@github.com:${{ github.repository }}.git
+      #     git remote -v
 
       - name: Setup Node
         uses: actions/setup-node@v4
