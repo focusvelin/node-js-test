@@ -7,6 +7,16 @@
 * test3 ([565ece1](https://github.com/focusvelin/node-js-test/commit/565ece18651d44f7cf234a11f3275c4812a744a9))
 * upgrade node version ([733e9d6](https://github.com/focusvelin/node-js-test/commit/733e9d66d1da64a5e6e87e9f50f2f1a369240b6a))
 
+## [1.2.1](https://github.com/focusvelin/node-js-test/compare/v1.2.0...v1.2.1) (2026-03-30)
+
+
+### Bug Fixes
+
+* add concurrency to release workflow ([619fd27](https://github.com/focusvelin/node-js-test/commit/619fd2796e95bc57c9eab3d216cbe66a0c5ace2c))
+* update release workflow ([8dbfd32](https://github.com/focusvelin/node-js-test/commit/8dbfd32edb5cbc79bfc075b5cd21827253aecf7b))
+* update test ([17502de](https://github.com/focusvelin/node-js-test/commit/17502de7946d009bba3b6e6c5ffc680a2fada422))
+* update test ([c93a734](https://github.com/focusvelin/node-js-test/commit/c93a7344b895af98e7bb4b9724a39d01fb7eebb5))
+
 ## [1.2.0](https://github.com/focusvelin/node-js-test/compare/v1.1.4...v1.2.0) (2026-03-30)
 
 
