@@ -24,24 +24,23 @@ jobs:
         with:
           release-type: simple
           token: ${{ secrets.GITHUB_TOKEN }}
-          include-v-in-tag: true
-      - name: Notify Mattermost
-        if: steps.release.outputs.release_created == 'true'
-        run: |
+      # - name: Notify Mattermost
+      #   if: steps.release.outputs.release_created == 'true'
+      #   run: |
 
-          payload=$(cat <<EOF
-          {
-          "attachments": [
-              {
-              "color": "#9bb7f3",
-              "title": "Новая сборка тренера",
-              "text": "New release ${{ steps.release.outputs.tag_name }}\nhttps://github.com/${{ github.repository }}/releases/tag/${{ steps.release.outputs.tag_name }}\n\n${{ steps.release.outputs.body }}"
-              }
-          ]
-          }
-          EOF
-          )
+      #     payload=$(cat <<EOF
+      #     {
+      #     "attachments": [
+      #         {
+      #         "color": "#9bb7f3",
+      #         "title": "Новая сборка тренера",
+      #         "text": "New release ${{ steps.release.outputs.tag_name }}\nhttps://github.com/${{ github.repository }}/releases/tag/${{ steps.release.outputs.tag_name }}\n\n${{ steps.release.outputs.body }}"
+      #         }
+      #     ]
+      #     }
+      #     EOF
+      #     )
 
-          curl -X POST -H 'Content-Type: application/json' \
-            -d "$payload" \
-            ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+      #     curl -X POST -H 'Content-Type: application/json' \
+      #       -d "$payload" \
+      #       ${{ secrets.MATTERMOST_WEBHOOK_URL }}
