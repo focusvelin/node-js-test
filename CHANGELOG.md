@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/focusvelin/node-js-test/compare/v1.5.1...v1.5.2) (2026-03-31)
+
+
+### Bug Fixes
+
+* test ([#45](https://github.com/focusvelin/node-js-test/issues/45)) ([43ae102](https://github.com/focusvelin/node-js-test/commit/43ae1020984b534a129b9f6b358595814483ef40))
+
 ## [1.5.1](https://github.com/focusvelin/node-js-test/compare/v1.5.0...v1.5.1) (2026-03-31)
 
 
