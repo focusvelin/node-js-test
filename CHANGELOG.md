@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/focusvelin/node-js-test/compare/v1.5.0...v1.5.1) (2026-03-31)
+
+
+### Bug Fixes
+
+* workflow call ([eb22a1f](https://github.com/focusvelin/node-js-test/commit/eb22a1fd083f2fd73379ed26d280b905d3ed0d08))
+
 ## [1.5.0](https://github.com/focusvelin/node-js-test/compare/v1.4.0...v1.5.0) (2026-03-31)
 
 
