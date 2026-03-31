@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/focusvelin/node-js-test/compare/v1.4.0...v1.5.0) (2026-03-31)
+
+
+### Features
+
+* add build ([#41](https://github.com/focusvelin/node-js-test/issues/41)) ([285de8f](https://github.com/focusvelin/node-js-test/commit/285de8f17e83821236b4e50d6a5851f488035b51))
+
 ## [1.4.0](https://github.com/focusvelin/node-js-test/compare/v1.3.0...v1.4.0) (2026-03-31)
 
 
