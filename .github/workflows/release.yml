@@ -24,6 +24,16 @@ jobs:
         with:
           release-type: simple
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build trainer
+        if: steps.release.outputs.release_created == 'true'
+        uses: ./.github/workflows/build.yml
+        with:
+          tag: ${{ steps.release.outputs.tag_name }}
+
+
+
+
+
       # - name: Notify Mattermost
       #   if: steps.release.outputs.release_created == 'true'
       #   run: |

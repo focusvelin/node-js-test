@@ -1,11 +1,13 @@
 name: Build 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ inputs.tag }}
   cancel-in-progress: true
 
 jobs:
@@ -14,4 +16,4 @@ jobs:
       - ubuntu-latest
     steps:
       - name: Echo
-        run: echo ${{ github.ref_name }}
+        run: echo ${{ inputs.tag }}
